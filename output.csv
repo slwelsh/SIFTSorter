@@ -1,0 +1,4 @@
+ID_1,ID_2,Matching_score,Result
+UnknownOld-2019-05-07_carapace copy.jpg,TurtleOldSystem-2020-07-21-carapace copy.JPG,4.601769911504425,False Acceptance
+UnknownOld-2019-05-07_carapace copy.jpg,TurtleOldSystem-2020-07-21-carapace copy.JPG,4.601769911504425,True Rejection
+UnknownOld-2019-05-07_carapace copy.jpg,UMJ3-2020-10-7-carapace copy.jpg,3.896103896103896,True Rejection

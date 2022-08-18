@@ -1,0 +1,3 @@
+[[<ReadFolder.MyImage object at 0x107199c90>, <ReadFolder.MyImage object at 0x107199c50>], [<ReadFolder.MyImage object at 0x1071a5b90>]]resized-width: 250distance_coefficient: 0.8acceptance_number: 4false_instances: 1false_acceptance_instances: 1false_acceptance_list: 
+[4.601769911504425]false_rejection_instances: 0false_rejection_list: 
+[]
