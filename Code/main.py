@@ -12,7 +12,7 @@ cfg_file_path = "yolov3_testing.cfg"
 yolo_weights_path = "yolov3_training_1000.weights"
 is_auto_cropped = True
 specimen = "Turtle"
-#photo_directory_path = r"C:\Users\williamhuang\OneDrive - DOI\Desktop\Test Pictures"
+#photo_directory_path = r"C:...\Test Pictures"
 save_directory_path = "NewDatabase"
 
 # # Initializes the class
@@ -20,7 +20,7 @@ save_directory_path = "NewDatabase"
 # # Starts matching
 # sift_matcher.start_matching(photo_directory_path, save_directory_path, specimen)
 
-#image_path_1 = r"C:\Users\williamhuang\Downloads\Sample Turtles\UnknownOld-2019-05-07_carapace copy.jpg"
+#image_path_1 = r"C:\Users\...\UnknownOld-2019-05-07_carapace copy.jpg"
 image_path_2 = r"Carapace Photos Database 2025/553-2025-04-26.jpg"
 image_path_3 = r"Carapace Photos Database 2025/553-2025-05-30.jpg"
 
