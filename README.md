@@ -1,6 +1,7 @@
 # SIFT Turtle Carapace Sorter Instructions
 
-The program was compiled using PyInstaller.
+This project was started in 2021 by @knightowl247 via https://github.com/knightowl247/Sift-Sorter
+It is now being edited and added to here. There are executables compiled using PyInstaller available for download ...
 
 
 ## To Run:
@@ -15,7 +16,7 @@ If you select the Auto Crop option, there will be another options page to select
 > Note the first 3 modules use "True" and "False" descriptors for any Accepted or Rejected matches. This is using the IDs in the image file names to check if the images actually do or don't match each other. I'm assuming this was testing purposes of the project. This True/False aspect was not included in the last module I created, as I didn't feel it made sense given its purpose. 
 
 
-### Below is a brief description of the 4 modules
+### Below is a brief description of the 4 modules -
 
 Sift Matcher - This module requires the input of the Database folder of the images, an empty save folder to direct the output files to, and a "Speciman Name" (this is just what the resulting folder groups will be named). When run, the program will compare every image in the database with every other image and determine if they are a match or not. 
 If it is an "Accepted" match, the images will be saved into a unique "Speciman Name" folder. The results for all the comparisons are saved in a "SIFT_matcher_output.csv" file. A details file ("SIFT_matcher_details.txt") file is also created highlighting some important stats of the success of the matcher (lowest true acceptance, list of false rejections, etc.)
@@ -28,6 +29,8 @@ Sift Comparator - This module takes the input of two images and runs the SIFT al
 Sift Find Match - This module takes the input of one image and a Database folder and compares that single image against all the images in the folder. The output of this is printing the total number of matches found and listing the file names of the matches (with the scores they received) in the console. It also displays a combined image of the original picture with the best match found (with all the best points mapped together like in the Comparator).
 This module was made specifically to add new pictures the database (which is why I omitted the True/False aspect of it). If no match is found, no comparison image is displayed and there is no list of matches in the console. 
 
+Compare Folders - This module is almost identical to the Matcher module. Instead of sorting through just one folder database, it compares two different databases and finds all the matches between them. It will also produce a results csv file and sort all the matches found for Folder A images with Folder B images.
+
 
 ### Technical Note
 There are 3 main variables when using the SIFT algorithm - 
@@ -38,21 +41,4 @@ There are 3 main variables when using the SIFT algorithm -
 I have modified the gui to show the defaults recommended by Huang automatically, so no user interaction is needed. If you would like to test the algorithm or try to make it more accurate, these are variables to alter.
 
 
-> Below is Huang's descriptions of the variables for a more detailed explanation - 
-
-Resized_width is width of the readjusted photo when photos are matched. The higher the number, the bigger the size of the photo, 
-meaning better resolution. The results of this are a longer photo load time and match time due to more data being computed and 
-more chances for the SIFT algorithm to find key points. Too high of a number and the SIFT algorithm may pick of background interference 
-with longer runtime and too little will result in a shorter runtime but not enough keypoints being found for accurate matching. 
-I would recommend starting with 250 and playing with that number to match what best works for you.
-
-The second variable, distance_coefficient, compares how close relatively in distance one keypoint in a photo is to another. 
-A high distance_coefficient means more leeway to accept keypoints on different pictures as matches, raising the match score between photos
-A low distance_coefficient means the closeness of the keypoints has to be more accurate, likely decreasing the match score 
-between photos. I recommend using 0.67 and tweaking it from there.
-
-The variable acceptance_number is a number between 0-100 that is a threshold number needed for a match score to deem two 
-pictures a match. A relatively high acceptance_number would require the match score to be really high between two photos, likely rejecting
-scores coming from the same specimen in two photos if there is a bit of variation. A relatively low acceptance_number may on the other hand 
-accept matches that are not actually matches. I recommend the number 4 as there is likely significant variation between different photos with 
-the same specimen and enough differences in photos where there are different specimens that 4 can be considered high.
+> A more detailed explanation of the variables can be found in Huang's original README.md file (in the forked repo).
