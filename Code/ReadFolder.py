@@ -1,8 +1,9 @@
 import cv2
 import os
-import CustomDetector
+from CustomDetector import CustomDetector
 
 
+# Function that resizes an image
 def resize_with_aspect_ratio(image, width=None, height=None, inter=cv2.INTER_AREA):
     dim = None
     (h, w) = image.shape[:2]
@@ -22,11 +23,16 @@ def resize_with_aspect_ratio(image, width=None, height=None, inter=cv2.INTER_ARE
         return None
 
 
+# Class that creates a processed version of a photo for SIFT Matching and holds relevant information for image
 class MyImage:
-    def __init__(self, img_name, folder, width):
-        self.img = cv2.imread(os.path.join(folder,img_name))
+    def __init__(self, img, img_name, width, cfg_file_path=None, yolo_weights_path=None, is_auto_cropped=True):
+        self.img = img
+        self.cfg_file_path = cfg_file_path
+        self.yolo_weights_path = yolo_weights_path
         new_image = self.img
-        new_image = CustomDetector.crop(new_image)
+        if is_auto_cropped is True and cfg_file_path is not None and yolo_weights_path is not None:
+            custom_detector = CustomDetector(cfg_file_path, yolo_weights_path)
+            new_image = custom_detector.crop(new_image)
         new_image = resize_with_aspect_ratio(new_image, width=width)
         self.processed_img = new_image
         self.__name = img_name
@@ -35,12 +41,20 @@ class MyImage:
         return self.__name
 
 
-def load_images_from_folder(folder, width):
-    images = []
-    for filename in os.listdir(folder):
-        img = cv2.imread(os.path.join(folder,filename))
-        if img is not None:
-            print(filename + ' has been loaded')
-            images.append(MyImage(filename, folder, width))
-    return images
+# Loads images for SIFT Matching
+class ImageLoader:
+    def __init__(self, cfg_file_path=None, yolo_weights_path=None, is_auto_cropped=True, resized_width=250):
+        self.cfg_file_path = cfg_file_path
+        self.yolo_weights_path = yolo_weights_path
+        self.resized_width = resized_width
+        self.is_auto_cropped = is_auto_cropped
+
+    def load_images_from_folder(self, folder):
+        images = []
+        for filename in os.listdir(folder):
+            img = cv2.imread(os.path.join(folder,filename))
+            if img is not None:
+                print(filename + ' has been loaded')
+                images.append(MyImage(img, filename, self.resized_width, self.cfg_file_path, self.yolo_weights_path, self.is_auto_cropped))
+        return images
 

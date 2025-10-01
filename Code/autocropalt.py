@@ -1,6 +1,6 @@
 import cv2
 
-
+# A static function that can crop an object in a given photo if the background is white
 def crop(image):
     # load image
     img = image

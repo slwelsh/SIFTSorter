@@ -1,8 +1,7 @@
 import cv2
-import os
 from ReadFolder import ImageLoader
-import csv
 import autocropalt
+import csv
 
 
 # Function that resizes an image
@@ -41,9 +40,9 @@ class MatchResults:
         self.match_result = match_result
 
 
-# This is a class that applies the SIFT algorithm to various photo pairs to determine whether the specimen in unique
-# photos are the same. Sorting happens based off the algorithms prediction. *NOTE: photo order matters in this algorithm
-class SiftMatcher:
+# This is a class that gets all SIFT scores for every possible pair in a photo database
+class GetAllSIFTScores:
+
     # Initializer with additional customization
     def __init__(self, cfg_file_path=None, yolo_weights_path=None, is_auto_cropped=True, resized_width=250, distance_coefficient=0.67, acceptance_number=4):
         self.resized_width = resized_width
@@ -93,6 +92,7 @@ class SiftMatcher:
 
             match_score = len(best_good_points) / number_keypoints * 100
             print("How good is the match: ", match_score)
+
             if match_score >= self.acceptance_number:
                 return Match(True, match_score)
             else:
@@ -113,10 +113,8 @@ class SiftMatcher:
                 return self.is_match(new_original, new_compare_image, None, None)
 
     # Function that initiates matching
-    def start_matching(self, photo_directory_path, save_directory_path, specimen):
-        # This initializes some global variables
+    def start_matching(self, photo_directory_path, save_directory_path):
         csv_match_results_file = []
-        new_folder = []
 
         lowest_true_acceptance = None
         highest_false_acceptance = None
@@ -129,22 +127,19 @@ class SiftMatcher:
         false_rejection_instances = 0
         false_rejection_list = []
 
-        # This loads up photos
         image_loader = ImageLoader(self.cfg_file_path, self.yolo_weights_path, self.is_auto_cropped, self.resized_width)
         images = image_loader.load_images_from_folder(photo_directory_path)
 
-        # This is the actual chunk of code that sorts the photos
         while len(images) > 0:
-            temporary_list = [images[0]]
-            original = images[0].processed_img
-            print('Photos Left To Sort:' + str(len(images)) + ' (' + str(images[0]) + ')')
+            processed_original_image = images[0].processed_img
+            print('Photos Left To Compare:' + str(len(images)) + ' (' + str(images[0]) + ')')
             for i in range(len(images)):
-                if i == len(images) - 1:
+                if i is len(images) - 1:
                     pass
                 else:
                     print(str(images[0]) + ' compared with ' + str(images[i + 1]))
                     image_to_compare = images[i + 1].processed_img
-                    match_result = self.is_match(original, image_to_compare, images[i].img, images[i + 1].img)
+                    match_result = self.is_match(processed_original_image, image_to_compare, images[i].img, images[i + 1].img)
 
                     if str(images[0]).split('-')[0] == str(images[i + 1]).split('-')[0]:
                         if match_result.isMatch is True:
@@ -159,7 +154,6 @@ class SiftMatcher:
                             print('False Rejection')
                             match_info = MatchResults(str(images[0]), str(images[i + 1]), match_result.score, "False Rejection")
                             csv_match_results_file.append(match_info)
-                            false_rejection_list.append(match_result.score)
                             if lowest_false_rejection is None or match_result.score < lowest_false_rejection:
                                 lowest_false_rejection = match_result.score
                     else:
@@ -169,7 +163,6 @@ class SiftMatcher:
                             print('False Acceptance')
                             match_info = MatchResults(str(images[0]), str(images[i + 1]), match_result.score, "False Acceptance")
                             csv_match_results_file.append(match_info)
-                            false_acceptance_list.append(match_result.score)
                             if highest_false_acceptance is None or match_result.score > highest_false_acceptance:
                                 highest_false_acceptance = match_result.score
                         else:
@@ -179,21 +172,15 @@ class SiftMatcher:
                             if highest_true_rejection is None or match_result.score > highest_true_rejection:
                                 highest_true_rejection = match_result.score
 
-                    if match_result.isMatch is True:
-                        temporary_list.append(images[i + 1])
-            new_folder.append(temporary_list)
-            for i in range(len(temporary_list)):
-                images.remove(temporary_list[i])
+            images.remove(images[0])
 
         # This organizes the order of two lists that will be outputted and saved to the details text file
         false_rejection_list.sort()
         false_acceptance_list.sort()
-
         # This clears the text file from any previous usage of the program
-        yolo_text_file = open(save_directory_path + "/SIFT_matcher_details.txt", "a+")
+        yolo_text_file = open(save_directory_path + "/all_SIFT_Scores_output_details.txt", "a+")
         yolo_text_file.truncate(0)
         # This adds the specifications for a match batch into a viewable details file
-        yolo_text_file.write(str(new_folder) + "\n")
         yolo_text_file.write('resized-width: ' + str(self.resized_width) + "\n")
         yolo_text_file.write('distance_coefficient: ' + str(self.distance_coefficient) + "\n")
         yolo_text_file.write('acceptance_number: ' + str(self.acceptance_number) + "\n")
@@ -208,7 +195,6 @@ class SiftMatcher:
         yolo_text_file.write('highest_true_rejection: ' + str(highest_true_rejection) + "\n")
 
         # This displays the results (which were also saved in the details file) of the program in the console
-        print(new_folder)
         print('resized-width: ' + str(self.resized_width))
         print('distance_coefficient: ' + str(self.distance_coefficient))
         print('acceptance_number: ' + str(self.acceptance_number))
@@ -222,16 +208,7 @@ class SiftMatcher:
         print('highest_false_acceptance: ' + str(highest_false_acceptance))
         print('highest_true_rejection: ' + str(highest_true_rejection))
 
-        # This adds the output file
-        csv_writer = csv.writer(open(save_directory_path + "/SIFT_matcher_output.csv", "w"))
+        csv_writer = csv.writer(open(save_directory_path + "/all_SIFT_scores_output.csv", "w"))
         csv_writer.writerow(["ID_1", "ID_2", "Matching_score", "Result"])
         for match_info in csv_match_results_file:
             csv_writer.writerow([match_info.original_name, match_info.compare_name, match_info.match_score, match_info.match_result])
-
-        # This adds the newly generated folder with objects/specimens in sub-folders with other matches
-        for subFolder in range(len(new_folder)):
-            os.makedirs(os.path.join(save_directory_path, specimen + " " + str(subFolder + 1)))
-            for image in range(len(new_folder[subFolder])):
-                path = save_directory_path + '/' + specimen + " " + str(subFolder + 1)
-                cv2.imwrite(os.path.join(path, str(new_folder[subFolder][image])), new_folder[subFolder][image].img)
-
