@@ -1,6 +1,6 @@
 # SIFT Turtle Carapace Sorter Instructions
 
-This project was started in 2021 by @knightowl247 via https://github.com/knightowl247/Sift-Sorter
+This project was started in 2021 by William Huang (https://github.com/knightowl247/Sift-Sorter)
 It is now being edited and added to here. There are executables compiled using PyInstaller available for download ...
 
 
