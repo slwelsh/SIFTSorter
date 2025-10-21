@@ -74,7 +74,7 @@ def page1():
     sift_find_label = Label(gui ,text="Finds all matches for one image by searching Database folder")
     sift_find_label.grid(row=5,column = 2, sticky="w")
 
-    sift_find_button = tb.Button(gui, text="Compare Folders", width=10, command=lambda: changepageandsavesiftmode(sift_folder_page))
+    sift_find_button = tb.Button(gui, text="Match Folders", width=10, command=lambda: changepageandsavesiftmode(sift_folder_page))
     sift_find_button.grid(row=6, column=1,  pady=10, padx=10)
     sift_find_label = Label(gui ,text="Sorts two Database folders")
     sift_find_label.grid(row=6,column = 2, sticky="w")
@@ -575,4 +575,5 @@ def sift_folder_page():
 
 
 page1()
+
 gui.mainloop()
